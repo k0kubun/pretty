@@ -11,7 +11,8 @@ import (
 )
 
 const (
-	limit = 50
+	limit       = 50
+	indentWidth = 2
 )
 
 type formatter struct {
@@ -56,7 +57,7 @@ func (fo formatter) passThrough(f fmt.State, c rune) {
 
 func (fo formatter) Format(f fmt.State, c rune) {
 	if fo.force || c == 'v' && f.Flag('#') && f.Flag(' ') {
-		w := tabwriter.NewWriter(f, 4, 4, 1, ' ', 0)
+		w := tabwriter.NewWriter(f, indentWidth, indentWidth, 1, ' ', 0)
 		p := &printer{tw: w, Writer: w, visited: make(map[visit]int)}
 		p.printValue(reflect.ValueOf(fo.x), true, fo.quote)
 		w.Flush()
@@ -74,7 +75,7 @@ type printer struct {
 
 func (p *printer) indent() *printer {
 	q := *p
-	q.tw = tabwriter.NewWriter(p.Writer, 4, 4, 1, ' ', 0)
+	q.tw = tabwriter.NewWriter(p.Writer, indentWidth, indentWidth, 1, ' ', 0)
 	q.Writer = text.NewIndentWriter(q.tw, []byte{'\t'})
 	return &q
 }
